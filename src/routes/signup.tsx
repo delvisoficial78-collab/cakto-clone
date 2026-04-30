@@ -25,7 +25,7 @@ function SignupPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -39,7 +39,12 @@ function SignupPage() {
       return;
     }
     toast.success("Conta criada com sucesso!");
-    navigate({ to: "/" });
+    if (data.session) {
+      // Sessão já ativa (auto-confirm) — recarrega na home para garantir estado limpo
+      window.location.assign("/");
+    } else {
+      navigate({ to: "/login" });
+    }
   };
 
   return (
